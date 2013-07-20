@@ -79,6 +79,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 #include "p_setup.h"
 #include "r_local.h"
 
+#include "beagleboy.h"
 
 #include "d_main.h"
 
@@ -802,6 +803,9 @@ void D_DoomMain (void)
 {
     int             p;
     char                    file[256];
+
+    bb_init();
+    bb_load_cal();
 
     FindResponseFile ();
 	

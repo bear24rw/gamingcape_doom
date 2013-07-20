@@ -49,6 +49,8 @@ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
 #include "doomdef.h"
 
+#include "beagleboy.h"
+
 #define POINTER_WARP_COUNTDOWN	1
 
 // SDL pixel color depth
@@ -92,14 +94,14 @@ void I_InitGraphics(void)
     	I_Error("SDL initializing error");
     }
 
-    screen = SDL_SetVideoMode(X_width, X_height, SDL_BPP, SDL_SWSURFACE);
+    screen = SDL_SetVideoMode(320, 240, SDL_BPP, SDL_SWSURFACE);
 
     if(screen == NULL) {
     	I_Error("SDL setting video mode error");
     }
 
     if (multiply == 1)
-    	screens[0] = (byte*) (screen->pixels);
+        screens[0] = (byte*) (screen->pixels) + (320*20);
     else
     	I_Error("Unsupported Mode");
 
@@ -335,6 +337,32 @@ void I_StartTic (void)
 
     while (SDL_PollEvent(&sdl_event))
     	I_ProcessEvent(&sdl_event);
+
+    bb_refresh();
+
+    event_t event_mouse;
+    event_t event_joy;
+    event_mouse.type = ev_mouse;
+    event_joy.type = ev_joystick;
+
+    event_joy.data2 = 0;
+    event_mouse.data3 = 0;
+
+    if (bb_joy_y > 200 || bb_joy_y < -200)
+	    event_joy.data3 = -1*bb_joy_y;
+    else
+	    event_joy.data3 = 0;
+
+    if (bb_joy_x > 100 || bb_joy_x < -100)
+	    event_mouse.data2 = bb_joy_x / 5;
+    else
+	    event_mouse.data2 = 0;
+
+    event_mouse.data1 = (bb_a << 1) | bb_b;
+
+    D_PostEvent(&event_mouse);
+    D_PostEvent(&event_joy);
+
 
     // Warp the pointer back to the middle of the window
     //  or it will wander off - that is, the game will
