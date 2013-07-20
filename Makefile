@@ -6,7 +6,7 @@
 #
 CC=  gcc # gcc or g++
 
-CFLAGS=-m32 -g -Wall -DNORMALUNIX -DLINUX -DSDL # -DUSEASM 
+CFLAGS=-lm -Wall -DNORMALUNIX -DLINUX -DSDL # -DUSEASM
 LDFLAGS=-L/usr/lib/i386-linux-gnu/
 LIBS=-lSDL #-lnsl -lm
 
@@ -75,13 +75,14 @@ OBJS=				\
 		$(O)/s_sound.o		\
 		$(O)/z_zone.o			\
 		$(O)/info.o				\
-		$(O)/sounds.o
+		$(O)/sounds.o \
+		$(O)/beagleboy.o
 
 all:	 $(O)/sdl_doom
 
 clean:
 	rm -f *.o *~ *.flc
-	rm -f linux/*
+	rm -f linux/*.o linux/sdl_doom
 
 $(O)/sdl_doom:	$(OBJS) $(O)/i_main.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(O)/i_main.o \
